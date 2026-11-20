@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المشاريع الذكي</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { margin: 0; background: var(--light); color: var(--dark); }
+        .container { max-width: 900px; margin: auto; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        input, select, textarea, button {
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 16px;
+        }
+        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { opacity: 0.9; }
+        .btn-secondary { background: #64748b; }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+        .hidden { display: none !important; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .stat-box { background: #eff6ff; padding: 15px; border-radius: 10px; text-align: center; border-right: 4px solid var(--primary); }
+        .stat-box h3 { margin: 0; font-size: 14px; color: #64748b; }
+        .stat-box p { margin: 5px 0 0; font-size: 22px; font-weight: bold; color: var(--dark); }
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; background: var(--dark); color: white; padding: 15px 20px; }
+        .tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .tab-btn { width: auto; background: #e2e8f0; color: var(--dark); white-space: nowrap; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; }
+    </style>
+</head>
+<body>
+
+    <!-- شريط علوي -->
+    <div class="nav-bar hidden" id="topNav">
+        <strong id="headerProjectName">اسم المشروع</strong>
+        <div>
+            <button onclick="switchMode('admin')" style="width:auto; padding:6px 12px; font-size:13px;">لوحة الإدارة</button>
+            <button onclick="switchMode('client')" class="btn-success" style="width:auto; padding:6px 12px; font-size:13px;">بوابة العملاء</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. معالج التثبيت التلقائي -->
+        <div id="setupWizard" class="card">
+            <h2>🚀 إعداد وتثبيت النظام التلقائي</h2>
+            <p>أدخل بيانات منشأتك ليقوم النظام بتهيئة الأقسام والحسابات تلقائياً:</p>
+            <label>اسم المنشأة / المشروع:</label>
+            <input type="text" id="setupName" placeholder="مثال: مطعم السعادة / فندق النيل / شركة الأمل">
+            
+            <label>نوع النشاط:</label>
+            <select id="setupType">
+                <option value="مطعم / كافيه">مطعم / كافيه</option>
+                <option value="فندق / شقق فندقية">فندق / شقق فندقية</option>
+                <option value="شركة تجارية / خدمات">شركة تجارية / خدمات</option>
+                <option value="متجر / مبيعات">متجر / مبيعات</option>
+            </select>
+
+            <label>العملة:</label>
+            <select id="setupCurrency">
+                <option value="ج.م">جنيه مصري (ج.م)</option>
+                <option value="ر.س">ريال سعودي (ر.س)</option>
+                <option value="$">دولار ($)</option>
+            </select>
+
+            <label>الربح المستهدف شهرياً (خطة الربح):</label>
+            <input type="number" id="setupTarget" placeholder="مثال: 50000">
+
+            <button onclick="installSystem()">تثبيت وتشغيل النظام الآن ⚡</button>
+        </div>
+
+        <!-- 2. لوحة تحكم الإدارة -->
+        <div id="adminDashboard" class="hidden">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('overview', this)">📊 الأرباح والخطة</button>
+                <button class="tab-btn" onclick="showTab('invoices', this)">🧾 الفواتير والمصروفات</button>
+                <button class="tab-btn" onclick="showTab('complaints', this)">📩 الشكاوى والبلاغات</button>
+                <button class="tab-btn btn-danger" onclick="resetSystem()">⚙️ إعادة ضبط</button>
+            </div>
+
+            <!-- تبويب الأرباح -->
+            <div id="tab-overview" class="card">
+                <h3 id="projectBadge"></h3>
+                <div class="grid">
+                    <div class="stat-box">
+                        <h3>إجمالي الإيرادات</h3>
+                        <p id="statRevenue">0</p>
+                    </div>
+                    <div class="stat-box" style="border-color: var(--danger);">
+                        <h3>إجمالي المصروفات</h3>
+                        <p id="statExpenses">0</p>
+                    </div>
+                    <div class="stat-box" style="border-color: var(--success);">
+                        <h3>صافي الربح الفعلي</h3>
+                        <p id="statNetProfit">0</p>
+                    </div>
+                    <div class="stat-box" style="border-color: #f59e0b;">
+                        <h3>نسبة تحقيق خطة الربح</h3>
+                        <p id="statTargetPercent">0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تبويب الفواتير والمصروفات -->
+            <div id="tab-invoices" class="card hidden">
+                <h3>إضافة عملية مالية جديدة</h3>
+                <select id="transType">
+                    <option value="income">فاتورة مبيعات / إيراد (+)</option>
+                    <option value="expense">مصروفات / تكاليف (-)</option>
+                </select>
+                <input type="text" id="transClient" placeholder="اسم العميل أو بند المصروف">
+                <input type="number" id="transAmount" placeholder="المبلغ">
+                <button onclick="addTransaction()">حفظ العملية</button>
+
+                <h4>سجل الفواتير والعمليات</h4>
+                <table>
+                    <thead><tr><th>النوع</th><th>البيان</th><th>المبلغ</th></tr></thead>
+                    <tbody id="transTable"></tbody>
+                </table>
+            </div>
+
+            <!-- تبويب الشكاوى -->
+            <div id="tab-complaints" class="card hidden">
+                <h3>الشكاوى والبلاغات الواردة من العملاء</h3>
+                <div id="complaintsList">لا توجد شكاوى حالياً.</div>
+            </div>
+        </div>
+
+        <!-- 3. بوابة العملاء (معزولة تماماً عن خصوصيات الإدارة) -->
+        <div id="clientPortal" class="hidden">
+            <div class="card">
+                <h2 id="clientWelcome">مرحباً بك في منشأتنا</h2>
+                <p>هذه البوابة مخصصة لخدمات العملاء وتقديم المقترحات والشكاوى.</p>
+                <hr>
+                <h3>تقديم بلاغ أو شكوى للإدارة</h3>
+                <input type="text" id="compName" placeholder="اسمك (اختياري)">
+                <input type="text" id="compPhone" placeholder="رقم للتواصل">
+                <textarea id="compMsg" rows="4" placeholder="اكتب تفاصيل الشكوى أو الطلب هنا..."></textarea>
+                <button class="btn-success" onclick="submitComplaint()">إرسال للإدارة</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // تحميل البيانات المحفوظة
+        let appData = JSON.parse(localStorage.getItem('smartERP')) || null;
+
+        window.onload = function() {
+            if (appData && appData.installed) {
+                startApp();
+            }
+        };
+
+        // 1. دالة التثبيت التلقائي
+        function installSystem() {
+            const name = document.getElementById('setupName').value.trim();
+            const type = document.getElementById('setupType').value;
+            const currency = document.getElementById('setupCurrency').value;
+            const target = parseFloat(document.getElementById('setupTarget').value) || 10000;
+
+            if (!name) return alert('من فضلك أدخل اسم المشروع');
+
+            appData = {
+                installed: true,
+                name: name,
+                type: type,
+                currency: currency,
+                target: target,
+                transactions: [],
+                complaints: []
+            };
+            saveData();
+            startApp();
+        }
+
+        function startApp() {
+            document.getElementById('setupWizard').classList.add('hidden');
+            document.getElementById('topNav').classList.remove('hidden');
+            document.getElementById('headerProjectName').innerText = appData.name;
+            document.getElementById('projectBadge').innerText = `لوحة قيادة: ${appData.name} (${appData.type})`;
+            document.getElementById('clientWelcome').innerText = `أهلاً بك في ${appData.name}`;
+            switchMode('admin');
+            updateDashboard();
+        }
+
+        // التبديل بين وضع الإدارة ووضع العميل
+        function switchMode(mode) {
+            if (mode === 'admin') {
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('clientPortal').classList.add('hidden');
+                updateDashboard();
+            } else {
+                document.getElementById('adminDashboard').classList.add('hidden');
+                document.getElementById('clientPortal').classList.remove('hidden');
+            }
+        }
+
+        // التنقل بين التبويبات
+        function showTab(tabName, btn) {
+            document.querySelectorAll('#adminDashboard .card').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+            btn.classList.add('active');
+        }
+
+        // إضافة فاتورة أو مصروف
+        function addTransaction() {
+            const type = document.getElementById('transType').value;
+            const client = document.getElementById('transClient').value.trim();
+            const amount = parseFloat(document.getElementById('transAmount').value);
+
+            if (!client || !amount) return alert('أدخل البيان والمبلغ');
+
+            appData.transactions.unshift({ type, client, amount, date: new Date().toLocaleDateString('ar-EG') });
+            saveData();
+            document.getElementById('transClient').value = '';
+            document.getElementById('transAmount').value = '';
+            updateDashboard();
+            alert('تم الحفظ بنجاح');
+        }
+
+        // إرسال شكوى من العميل
+        function submitComplaint() {
+            const name = document.getElementById('compName').value.trim() || 'عميل';
+            const phone = document.getElementById('compPhone').value.trim();
+            const msg = document.getElementById('compMsg').value.trim();
+
+            if (!msg) return alert('اكتب نص الشكوى أولاً');
+
+            appData.complaints.unshift({ name, phone, msg, date: new Date().toLocaleString('ar-EG') });
+            saveData();
+            document.getElementById('compName').value = '';
+            document.getElementById('compPhone').value = '';
+            document.getElementById('compMsg').value = '';
+            alert('تم إرسال رسالتك للإدارة بنجاح!');
+        }
+
+        // تحديث الأرقام والحسابات
+        function updateDashboard() {
+            let income = 0, expense = 0;
+            const tbody = document.getElementById('transTable');
+            tbody.innerHTML = '';
+
+            appData.transactions.forEach(t => {
+                if (t.type === 'income') income += t.amount;
+                else expense += t.amount;
+
+                tbody.innerHTML += `<tr>
+                    <td style="color:${t.type==='income'?'green':'red'}">${t.type==='income'?'إيراد':'مصروف'}</td>
+                    <td>${t.client}</td>
+                    <td>${t.amount} ${appData.currency}</td>
+                </tr>`;
+            });
+
+            const net = income - expense;
+            const percent = Math.max(0, Math.round((net / appData.target) * 100));
+
+            document.getElementById('statRevenue').innerText = `${income} ${appData.currency}`;
+            document.getElementById('statExpenses').innerText = `${expense} ${appData.currency}`;
+            document.getElementById('statNetProfit').innerText = `${net} ${appData.currency}`;
+            document.getElementById('statTargetPercent').innerText = `${percent}%`;
+
+            // تحديث الشكاوى
+            const compDiv = document.getElementById('complaintsList');
+            if (appData.complaints.length > 0) {
+                compDiv.innerHTML = appData.complaints.map(c => `
+                    <div style="border-bottom:1px solid #eee; padding:10px 0;">
+                        <strong>${c.name}</strong> (${c.phone}) - <small>${c.date}</small>
+                        <p style="margin:5px 0;">${c.msg}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('smartERP', JSON.stringify(appData));
+        }
+
+        function resetSystem() {
+            if(confirm('هل تريد مسح جميع البيانات وإعادة تثبيت النظام؟')) {
+                localStorage.removeItem('smartERP');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
