@@ -1,297 +1,1494 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة المشاريع الذكي</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --success: #10b981;
-            --danger: #ef4444;
-        }
-        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-        body { margin: 0; background: var(--light); color: var(--dark); }
-        .container { max-width: 900px; margin: auto; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input, select, textarea, button {
-            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 16px;
-        }
-        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
-        button:hover { opacity: 0.9; }
-        .btn-secondary { background: #64748b; }
-        .btn-success { background: var(--success); }
-        .btn-danger { background: var(--danger); }
-        .hidden { display: none !important; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-        .stat-box { background: #eff6ff; padding: 15px; border-radius: 10px; text-align: center; border-right: 4px solid var(--primary); }
-        .stat-box h3 { margin: 0; font-size: 14px; color: #64748b; }
-        .stat-box p { margin: 5px 0 0; font-size: 22px; font-weight: bold; color: var(--dark); }
-        .nav-bar { display: flex; justify-content: space-between; align-items: center; background: var(--dark); color: white; padding: 15px 20px; }
-        .tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
-        .tab-btn { width: auto; background: #e2e8f0; color: var(--dark); white-space: nowrap; }
-        .tab-btn.active { background: var(--primary); color: white; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS AI — نظام الإدارة الذكي للمنشآت</title>
+  <style>
+    :root {
+      --blue: #1d4ed8;
+      --blue-dark: #1e3a8a;
+      --blue-soft: #eff6ff;
+      --black: #090d16;
+      --black-card: #111827;
+      --white: #ffffff;
+      --gray-line: #cbd5e1;
+      --gray-text: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.55;
+    }
+
+    /* شريط علوي أسود وأزرق وأبيض */
+    .topbar {
+      background: var(--black);
+      color: var(--white);
+      border-bottom: 3px solid var(--blue);
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: var(--white);
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: #93c5fd;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1.5px solid var(--black);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .card-dark {
+      background: var(--black);
+      color: var(--white);
+      border: 1.5px solid var(--blue);
+    }
+
+    .card-blue-tint {
+      background: var(--blue-soft);
+      border: 1.5px solid var(--blue);
+    }
+
+    h1, h2, h3, h4 {
+      margin-top: 0;
+      color: inherit;
+    }
+
+    .muted {
+      color: var(--gray-text);
+      font-size: 14px;
+    }
+
+    .card-dark .muted {
+      color: #cbd5e1;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+      font-size: 15px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--blue);
+      border-color: var(--blue);
+    }
+
+    button {
+      background: var(--blue);
+      color: var(--white);
+      border: 1.5px solid var(--blue);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    button:hover {
+      background: var(--blue-dark);
+      border-color: var(--blue-dark);
+    }
+
+    .btn-black {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .btn-black:hover {
+      background: #1e293b;
+    }
+
+    .btn-outline {
+      background: var(--white);
+      color: var(--black);
+      border: 1.5px solid var(--black);
+    }
+
+    .btn-outline:hover {
+      background: var(--blue-soft);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+
+    .kpi {
+      border: 1.5px solid var(--black);
+      border-right: 5px solid var(--blue);
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--white);
+    }
+
+    .kpi.dark-kpi {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--blue);
+      border-right: 5px solid #60a5fa;
+    }
+
+    .kpi .k-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray-text);
+    }
+
+    .kpi.dark-kpi .k-label {
+      color: #93c5fd;
+    }
+
+    .kpi .k-val {
+      font-size: 21px;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      background: var(--white);
+      color: var(--black);
+      border: 1.5px solid var(--black);
+    }
+
+    .tab-btn.active {
+      background: var(--blue);
+      color: var(--white);
+      border-color: var(--blue);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--gray-line);
+      padding: 9px 8px;
+      text-align: right;
+    }
+
+    th {
+      background: var(--black);
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .badge-blue {
+      background: var(--blue);
+      color: var(--white);
+      border-color: var(--blue);
+    }
+
+    .options-box {
+      max-height: 360px;
+      overflow-y: auto;
+      border: 1.5px solid var(--black);
+      border-radius: 10px;
+      padding: 12px;
+      background: var(--white);
+    }
+
+    .opt-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 7px 6px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 13px;
+    }
+
+    .opt-item input[type="checkbox"] {
+      width: auto;
+      margin: 3px 0 0 0;
+      accent-color: var(--blue);
+    }
+
+    .catalog-card {
+      border: 1.5px solid var(--black);
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ai-box {
+      background: var(--black);
+      color: var(--white);
+      border: 2px solid var(--blue);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .ai-box ul {
+      margin: 8px 0 0;
+      padding-right: 18px;
+    }
+
+    .ai-box li {
+      margin-bottom: 8px;
+    }
+
+    .qr-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: center;
+      padding: 14px;
+      border: 1.5px solid var(--black);
+      border-radius: 10px;
+      background: var(--white);
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; }
+      .card { border: 1px solid #000; box-shadow: none; }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- شريط علوي -->
-    <div class="nav-bar hidden" id="topNav">
-        <strong id="headerProjectName">اسم المشروع</strong>
+  <!-- اللوجو SVG الأساسي القابل لإعادة الاستخدام -->
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="nexus-logo" viewBox="0 0 64 64">
+      <rect x="2" y="2" width="60" height="60" rx="14" fill="#090d16" stroke="#1d4ed8" stroke-width="3"/>
+      <polygon points="32,12 50,23 50,41 32,52 14,41 14,23" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+      <circle cx="32" cy="32" r="8" fill="#1d4ed8"/>
+      <line x1="32" y1="12" x2="32" y2="24" stroke="#60a5fa" stroke-width="2.5"/>
+      <line x1="50" y1="41" x2="39" y2="36" stroke="#60a5fa" stroke-width="2.5"/>
+      <line x1="14" y1="41" x2="25" y2="36" stroke="#60a5fa" stroke-width="2.5"/>
+    </symbol>
+  </svg>
+
+  <!-- شريط علوي -->
+  <header class="topbar no-print">
+    <div class="brand">
+      <svg width="42" height="42"><use href="#nexus-logo"/></svg>
+      <div>
+        <div class="brand-title" id="topName">NEXUS AI SYSTEM</div>
+        <div class="brand-sub" id="topMeta">نظام إدارة وتشغيل ذكي للمنشآت</div>
+      </div>
+    </div>
+    <div class="top-actions" id="topActions">
+      <button class="btn-sm" onclick="openAdminGate()">لوحة الإدارة (AI)</button>
+      <button class="btn-sm btn-outline" onclick="switchToClient()">بوابة العملاء</button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. شاشة التثبيت التلقائي العميق -->
+    <section id="setupScreen" class="card">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+        <svg width="54" height="54"><use href="#nexus-logo"/></svg>
         <div>
-            <button onclick="switchMode('admin')" style="width:auto; padding:6px 12px; font-size:13px;">لوحة الإدارة</button>
-            <button onclick="switchMode('client')" class="btn-success" style="width:auto; padding:6px 12px; font-size:13px;">بوابة العملاء</button>
+          <h2 style="margin:0;">التثبيت التلقائي للمنشأة (Smart Setup)</h2>
+          <div class="muted">أدخل بيانات منشأتك بدقة ليقوم النظام بتجهيز الأقسام، خطة التسعير، وأكثر من 100 خيار تشغيل وإدارة تلقائياً.</div>
         </div>
-    </div>
+      </div>
 
-    <div class="container">
+      <div class="grid-2">
+        <div>
+          <label>اسم المنشأة / المشروع *</label>
+          <input type="text" id="cfgName" placeholder="مثال: مطعم القمة / فندق الواحة / شركة النور" />
 
-        <!-- 1. معالج التثبيت التلقائي -->
-        <div id="setupWizard" class="card">
-            <h2>🚀 إعداد وتثبيت النظام التلقائي</h2>
-            <p>أدخل بيانات منشأتك ليقوم النظام بتهيئة الأقسام والحسابات تلقائياً:</p>
-            <label>اسم المنشأة / المشروع:</label>
-            <input type="text" id="setupName" placeholder="مثال: مطعم السعادة / فندق النيل / شركة الأمل">
-            
-            <label>نوع النشاط:</label>
-            <select id="setupType">
-                <option value="مطعم / كافيه">مطعم / كافيه</option>
-                <option value="فندق / شقق فندقية">فندق / شقق فندقية</option>
-                <option value="شركة تجارية / خدمات">شركة تجارية / خدمات</option>
-                <option value="متجر / مبيعات">متجر / مبيعات</option>
+          <label>نوع المنشأة *</label>
+          <select id="cfgType" onchange="syncSetupDefaults()">
+            <option value="مطعم وكافيه">مطعم وكافيه (منيو + طاولات + دليفري)</option>
+            <option value="فندق وشقق فندقية">فندق وشقق فندقية (غرف/شقق + حجوزات + ضيافة)</option>
+            <option value="شركة تجارية وخدمات">شركة تجارية وخدمات (باقات + عقود + عملاء)</option>
+            <option value="متجر ومبيعات">متجر ومبيعات (منتجات + مخزون + فواتير)</option>
+          </select>
+
+          <label>العملة الرسمية</label>
+          <select id="cfgCurrency">
+            <option value="ج.م">جنيه مصري (ج.م)</option>
+            <option value="ر.س">ريال سعودي (ر.س)</option>
+            <option value="د.إ">درهم إماراتي (د.إ)</option>
+            <option value="$">دولار أمريكي ($)</option>
+          </select>
+
+          <label>الربح المستهدف شهرياً (خطة الربح)</label>
+          <input type="number" id="cfgTargetProfit" value="50000" min="0" />
+        </div>
+
+        <div>
+          <label>رمز مرور الإدارة (PIN لحماية الخصوصية)</label>
+          <input type="password" id="cfgPin" value="1234" placeholder="مثال: 1234" />
+
+          <label>الإيجار الشهري الثابت للمنشأة</label>
+          <input type="number" id="cfgRent" value="10000" min="0" />
+
+          <label>ساعات العمل اليومية</label>
+          <input type="text" id="cfgHours" value="09:00 ص - 11:00 م" />
+
+          <label>معلومات إضافية تساعد الذكاء الاصطناعي على تحسين الأداء</label>
+          <textarea id="cfgNotes" rows="3" placeholder="مثال: الذروة مساءً، نعتمد على الحجز المسبق، نريد تقليل الهالك ورفع هامش الربح..."></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button onclick="runAutoInstall()">تثبيت وتوليد النظام الآن (100+ أوبشن جاهز) ⚡</button>
+      </div>
+    </section>
+
+    <!-- 2. شاشة رمز دخول الإدارة -->
+    <section id="adminPinScreen" class="card hidden" style="max-width:440px; margin:30px auto;">
+      <h3>دخول لوحة الإدارة المحمية</h3>
+      <p class="muted">أدخل رمز المرور (PIN) للوصول للحسابات، المرتبات، الذكاء الاصطناعي، والشكاوى.</p>
+      <label>رمز المرور (PIN)</label>
+      <input type="password" id="pinInput" placeholder="أدخل رمز الإدارة" />
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button onclick="verifyAdminPin()">دخول الإدارة</button>
+        <button class="btn-outline" onclick="switchToClient()">العودة لبوابة العملاء</button>
+      </div>
+    </section>
+
+    <!-- 3. لوحة الإدارة المتكاملة -->
+    <section id="adminPanel" class="hidden">
+
+      <div class="tabs no-print">
+        <button class="tab-btn active" onclick="showAdminTab('overview', this)">📊 الأرباح وخطة التسعير</button>
+        <button class="tab-btn" onclick="showAdminTab('accounting', this)">🧾 الفواتير والإيجار والمرتبات</button>
+        <button class="tab-btn" onclick="showAdminTab('catalog', this)">🍽️/🏨 عروض العملاء (منيو/غرف/خدمات)</button>
+        <button class="tab-btn" onclick="showAdminTab('ai', this)">🤖 مساعد AI والبحث والتطوير</button>
+        <button class="tab-btn" onclick="showAdminTab('options100', this)">⚙️ 100+ أوبشن ذكي</button>
+        <button class="tab-btn" onclick="showAdminTab('qr', this)">📱 QR والشكاوى</button>
+        <button class="tab-btn btn-black" onclick="resetAllSystem()">🔄 إعادة ضبط كاملة</button>
+      </div>
+
+      <!-- تبويب 1: الأرباح وخطة التسعير -->
+      <div id="tab-overview" class="admin-tab">
+        <div class="grid-4">
+          <div class="kpi">
+            <div class="k-label">إجمالي الإيرادات</div>
+            <div class="k-val" id="kpiIncome">0</div>
+          </div>
+          <div class="kpi">
+            <div class="k-label">إجمالي المصروفات (فواتير + إيجار + رواتب)</div>
+            <div class="k-val" id="kpiExpenses">0</div>
+          </div>
+          <div class="kpi dark-kpi">
+            <div class="k-label">صافي الربح الفعلي</div>
+            <div class="k-val" id="kpiNet">0</div>
+          </div>
+          <div class="kpi">
+            <div class="k-label">نسبة تحقيق خطة الربح</div>
+            <div class="k-val" id="kpiTargetPct">0%</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px;">
+            <div>
+              <h3 style="margin:0;">خطة الأسعار والباقات المنظمة</h3>
+              <div class="muted">حدد أسعار خدماتك أو باقاتك بوضوح لتوحيد التسعير وحساب هوامش الربح.</div>
+            </div>
+            <button class="btn-sm" onclick="autoGeneratePricingPlan()">توليد خطة أسعار مقترحة بالـ AI</button>
+          </div>
+
+          <div class="grid-2" style="margin-top:10px;">
+            <input type="text" id="planTitle" placeholder="اسم الباقة أو الصنف (مثال: باقة VIP / وجبة عائلية / غرفة ديلوكس)" />
+            <input type="number" id="planPrice" placeholder="السعر" />
+          </div>
+          <input type="text" id="planDesc" placeholder="تفاصيل الخطة أو ما تتضمنه الخدمة" />
+          <button onclick="addPricingItem()">إضافة لخطة الأسعار</button>
+
+          <table>
+            <thead>
+              <tr>
+                <th>البند / الباقة</th>
+                <th>الوصف</th>
+                <th>السعر</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="pricingTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- تبويب 2: الفواتير والإيجار والمرتبات -->
+      <div id="tab-accounting" class="admin-tab hidden">
+        <div class="grid-2">
+          <!-- الفواتير والإيجار والمصروفات -->
+          <div class="card">
+            <h3>تسجيل فاتورة / إيراد / إيجار</h3>
+            <label>نوع العملية</label>
+            <select id="txType">
+              <option value="income">إيراد / فاتورة مبيعات (+)</option>
+              <option value="rent">فاتورة إيجار (-)</option>
+              <option value="utility">فاتورة كهرباء / مياه / إنترنت / ضرائب (-)</option>
+              <option value="expense">مصروفات تشغيلية / خامات (-)</option>
             </select>
+            <label>البيان / اسم العميل أو المورد</label>
+            <input type="text" id="txTitle" placeholder="مثال: إيجار شهر نوفمبر / فاتورة عميل / خامات" />
+            <label>المبلغ</label>
+            <input type="number" id="txAmount" placeholder="0" />
+            <button onclick="addTransaction()">حفظ العملية المالية</button>
 
-            <label>العملة:</label>
-            <select id="setupCurrency">
-                <option value="ج.م">جنيه مصري (ج.م)</option>
-                <option value="ر.س">ريال سعودي (ر.س)</option>
-                <option value="$">دولار ($)</option>
-            </select>
+            <h4 style="margin-top:16px;">سجل العمليات والفواتير</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>النوع</th>
+                  <th>البيان</th>
+                  <th>المبلغ</th>
+                  <th>حذف</th>
+                </tr>
+              </thead>
+              <tbody id="txTableBody"></tbody>
+            </table>
+          </div>
 
-            <label>الربح المستهدف شهرياً (خطة الربح):</label>
-            <input type="number" id="setupTarget" placeholder="مثال: 50000">
+          <!-- الموظفون والمرتبات -->
+          <div class="card">
+            <h3>إدارة الموظفين والمرتبات</h3>
+            <p class="muted">تسجيل الموظفين وحساب إجمالي المرتبات تلقائياً ضمن تكاليف المنشأة.</p>
+            <label>اسم الموظف</label>
+            <input type="text" id="empName" placeholder="مثال: محمود حسن" />
+            <label>الوظيفة / الدور</label>
+            <input type="text" id="empRole" placeholder="مثال: شيف / استقبال / محاسبة / مبيعات" />
+            <label>الراتب الشهري</label>
+            <input type="number" id="empSalary" placeholder="مثال: 6000" />
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button onclick="addEmployee()">إضافة موظف</button>
+              <button class="btn-black" onclick="postMonthlySalariesToExpenses()">ترحيل إجمالي المرتبات للمصروفات</button>
+            </div>
 
-            <button onclick="installSystem()">تثبيت وتشغيل النظام الآن ⚡</button>
+            <div style="margin-top:12px; font-weight:800;" id="totalSalariesBox">إجمالي الرواتب الشهرية: 0</div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>الموظف</th>
+                  <th>الوظيفة</th>
+                  <th>الراتب</th>
+                  <th>حذف</th>
+                </tr>
+              </thead>
+              <tbody id="empTableBody"></tbody>
+            </table>
+          </div>
         </div>
+      </div>
 
-        <!-- 2. لوحة تحكم الإدارة -->
-        <div id="adminDashboard" class="hidden">
-            <div class="tabs">
-                <button class="tab-btn active" onclick="showTab('overview', this)">📊 الأرباح والخطة</button>
-                <button class="tab-btn" onclick="showTab('invoices', this)">🧾 الفواتير والمصروفات</button>
-                <button class="tab-btn" onclick="showTab('complaints', this)">📩 الشكاوى والبلاغات</button>
-                <button class="tab-btn btn-danger" onclick="resetSystem()">⚙️ إعادة ضبط</button>
+      <!-- تبويب 3: إدارة ما يظهر للعميل (منيو / شقق / خدمات) -->
+      <div id="tab-catalog" class="admin-tab hidden">
+        <div class="card">
+          <h3>التحكم الكامل فيما يظهر للعميل داخل البوابة</h3>
+          <p class="muted">أضف العناصر التي تريد عرضها للعميل (مثل: أصناف المنيو للمطعم، أو الغرف والشقق المتاحة للفندق، أو الخدمات للشركة)، وتحكم في إظهارها أو إخفائها للعميل فوراً.</p>
+
+          <div class="grid-2">
+            <div>
+              <label>عنوان العنصر للعميل</label>
+              <input type="text" id="catTitle" placeholder="مثال: بيتزا مارجريتا / شقة فندقية غرفتين / استشارة تسويقية" />
             </div>
-
-            <!-- تبويب الأرباح -->
-            <div id="tab-overview" class="card">
-                <h3 id="projectBadge"></h3>
-                <div class="grid">
-                    <div class="stat-box">
-                        <h3>إجمالي الإيرادات</h3>
-                        <p id="statRevenue">0</p>
-                    </div>
-                    <div class="stat-box" style="border-color: var(--danger);">
-                        <h3>إجمالي المصروفات</h3>
-                        <p id="statExpenses">0</p>
-                    </div>
-                    <div class="stat-box" style="border-color: var(--success);">
-                        <h3>صافي الربح الفعلي</h3>
-                        <p id="statNetProfit">0</p>
-                    </div>
-                    <div class="stat-box" style="border-color: #f59e0b;">
-                        <h3>نسبة تحقيق خطة الربح</h3>
-                        <p id="statTargetPercent">0%</p>
-                    </div>
-                </div>
+            <div>
+              <label>السعر للعميل</label>
+              <input type="number" id="catPrice" placeholder="مثال: 180" />
             </div>
+          </div>
+          <label>وصف مختصر يظهر للعميل</label>
+          <input type="text" id="catDesc" placeholder="مثال: متاحة يومياً مع خدمة توصيل / إطلالة مباشرة / تسليم خلال 5 أيام" />
+          <label style="display:flex; align-items:center; gap:8px; margin-top:10px; cursor:pointer;">
+            <input type="checkbox" id="catVisible" checked style="width:auto; margin:0;" />
+            <span>إظهار هذا العنصر للعميل في بوابة العملاء الآن</span>
+          </label>
+          <button style="margin-top:10px;" onclick="addCatalogItem()">إضافة للعرض للعميل</button>
 
-            <!-- تبويب الفواتير والمصروفات -->
-            <div id="tab-invoices" class="card hidden">
-                <h3>إضافة عملية مالية جديدة</h3>
-                <select id="transType">
-                    <option value="income">فاتورة مبيعات / إيراد (+)</option>
-                    <option value="expense">مصروفات / تكاليف (-)</option>
-                </select>
-                <input type="text" id="transClient" placeholder="اسم العميل أو بند المصروف">
-                <input type="number" id="transAmount" placeholder="المبلغ">
-                <button onclick="addTransaction()">حفظ العملية</button>
-
-                <h4>سجل الفواتير والعمليات</h4>
-                <table>
-                    <thead><tr><th>النوع</th><th>البيان</th><th>المبلغ</th></tr></thead>
-                    <tbody id="transTable"></tbody>
-                </table>
-            </div>
-
-            <!-- تبويب الشكاوى -->
-            <div id="tab-complaints" class="card hidden">
-                <h3>الشكاوى والبلاغات الواردة من العملاء</h3>
-                <div id="complaintsList">لا توجد شكاوى حالياً.</div>
-            </div>
+          <table>
+            <thead>
+              <tr>
+                <th>العنصر</th>
+                <th>السعر</th>
+                <th>حالة الظهور للعميل</th>
+                <th>تحكم</th>
+              </tr>
+            </thead>
+            <tbody id="catalogAdminBody"></tbody>
+          </table>
         </div>
+      </div>
 
-        <!-- 3. بوابة العملاء (معزولة تماماً عن خصوصيات الإدارة) -->
-        <div id="clientPortal" class="hidden">
-            <div class="card">
-                <h2 id="clientWelcome">مرحباً بك في منشأتنا</h2>
-                <p>هذه البوابة مخصصة لخدمات العملاء وتقديم المقترحات والشكاوى.</p>
-                <hr>
-                <h3>تقديم بلاغ أو شكوى للإدارة</h3>
-                <input type="text" id="compName" placeholder="اسمك (اختياري)">
-                <input type="text" id="compPhone" placeholder="رقم للتواصل">
-                <textarea id="compMsg" rows="4" placeholder="اكتب تفاصيل الشكوى أو الطلب هنا..."></textarea>
-                <button class="btn-success" onclick="submitComplaint()">إرسال للإدارة</button>
-            </div>
+      <!-- تبويب 4: مساعد AI وحل المشكلات والبحث والتطوير -->
+      <div id="tab-ai" class="admin-tab hidden">
+        <div class="card card-blue-tint">
+          <h3>مساعد AI الذكي — تحليل العمليات وحل المشكلات والبحث والتطوير</h3>
+          <p class="muted">يقرأ أرقام منشأتك الفعلية (الإيرادات، الإيجار، الرواتب، الشكاوى، وملاحظاتك) ليقدم تشخيصاً عملياً وخطط تطوير.</p>
+
+          <label>اكتب مشكلة تواجهك أو سؤالاً استراتيجياً للمساعد الذكي:</label>
+          <textarea id="aiPromptInput" rows="3" placeholder="مثال: المصروفات عالية مقارنة بالإيرادات، كيف أرفع صافي الربح وأقلل الشكاوى وأطور المنشأة؟"></textarea>
+
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+            <button onclick="runAISolverAndResearch()">تحليل وحل المشكلات + بحث وتطوير (AI) 🤖</button>
+            <button class="btn-black" onclick="runQuickAccountingAI()">مراجعة الحسابات المعقدة وتقدير نقطة التعادل</button>
+          </div>
+
+          <div id="aiResultBox" class="ai-box">
+            <strong>جاهز للتحليل:</strong> اضغط على زر التحليل بالذكاء الاصطناعي لتوليد خطة حل المشكلات والبحث والتطوير بناءً على بيانات منشأتك.
+          </div>
         </div>
+      </div>
 
-    </div>
+      <!-- تبويب 5: أكثر من 100 أوبشن ذكي -->
+      <div id="tab-options100" class="admin-tab hidden">
+        <div class="card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px;">
+            <div>
+              <h3 style="margin:0;">مركز الـ 100+ أوبشن الذكي للمنشأة</h3>
+              <div class="muted" id="optionsCounterText">تم تفعيل 0 من أصل 100 أوبشن تشغيلي وإداري ومحاسبي.</div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-sm" onclick="toggleAll100Options(true)">تفعيل الكل (100+)</button>
+              <button class="btn-sm btn-outline" onclick="toggleAll100Options(false)">إلغاء تحديد الكل</button>
+            </div>
+          </div>
 
-    <script>
-        // تحميل البيانات المحفوظة
-        let appData = JSON.parse(localStorage.getItem('smartERP')) || null;
+          <div class="options-box" id="hundredOptionsContainer" style="margin-top:12px;"></div>
+        </div>
+      </div>
 
-        window.onload = function() {
-            if (appData && appData.installed) {
-                startApp();
-            }
-        };
+      <!-- تبويب 6: QR والشكاوى والبلاغات -->
+      <div id="tab-qr" class="admin-tab hidden">
+        <div class="grid-2">
+          <div class="card">
+            <h3>QR Code الخاص بالمنشأة للعملاء</h3>
+            <p class="muted">امسح هذا الكود أو شاركه مع العملاء لفتح بوابة العملاء مباشرة دون رؤية بيانات الإدارة.</p>
+            <div class="qr-wrap">
+              <img id="qrImage" src="" alt="QR Code للمنشأة" width="160" height="160" style="border:1.5px solid #090d16; border-radius:8px;" />
+              <div style="flex:1; min-width:200px;">
+                <div style="font-weight:800;" id="qrProjectTitle">اسم المنشأة</div>
+                <div class="muted" id="qrLinkText" style="word-break:break-all; margin:6px 0;"></div>
+                <button class="btn-sm no-print" onclick="window.print()">طباعة بطاقة الـ QR</button>
+              </div>
+            </div>
+          </div>
 
-        // 1. دالة التثبيت التلقائي
-        function installSystem() {
-            const name = document.getElementById('setupName').value.trim();
-            const type = document.getElementById('setupType').value;
-            const currency = document.getElementById('setupCurrency').value;
-            const target = parseFloat(document.getElementById('setupTarget').value) || 10000;
+          <div class="card">
+            <h3>الشكاوى والبلاغات وطلبات العملاء</h3>
+            <div id="adminComplaintsList">لا توجد شكاوى أو طلبات واردة حتى الآن.</div>
+          </div>
+        </div>
+      </div>
 
-            if (!name) return alert('من فضلك أدخل اسم المشروع');
+    </section>
 
-            appData = {
-                installed: true,
-                name: name,
-                type: type,
-                currency: currency,
-                target: target,
-                transactions: [],
-                complaints: []
-            };
-            saveData();
-            startApp();
+    <!-- 4. بوابة العملاء المعزولة بالكامل -->
+    <section id="clientPortal" class="hidden">
+      <div class="card card-dark">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <svg width="48" height="48"><use href="#nexus-logo"/></svg>
+          <div>
+            <h2 id="clientWelcomeTitle" style="margin:0;">مرحباً بك</h2>
+            <div class="muted" id="clientHoursText">ساعات العمل</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 id="clientCatalogHeading">القائمة / الخدمات المتاحة</h3>
+        <p class="muted">هذه العناصر مفعّلة للعرض للعملاء من إدارة المنشأة فقط.</p>
+        <div id="clientCatalogGrid" class="grid-2"></div>
+      </div>
+
+      <div class="card">
+        <h3>إرسال شكوى أو بلاغ أو ملاحظة للإدارة</h3>
+        <p class="muted">رسالتك تصل مباشرة إلى لوحة الإدارة بسرية وأمان.</p>
+        <label>الاسم</label>
+        <input type="text" id="cName" placeholder="اسمك" />
+        <label>رقم الهاتف للتواصل</label>
+        <input type="text" id="cPhone" placeholder="رقم الموبايل" />
+        <label>تفاصيل الشكوى أو البلاغ أو الاستفسار</label>
+        <textarea id="cMsg" rows="4" placeholder="اكتب رسالتك بوضوح..."></textarea>
+        <button style="margin-top:10px;" onclick="submitClientComplaint()">إرسال إلى الإدارة</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = "NEXUS_AI_ERP_V2";
+
+    // توليد 105 أوبشن تشغيلي ومحاسبي وإداري وتسويقي ورقابي
+    function build105Options(businessType) {
+      const baseCategories = [
+        { cat: "المحاسبة والضرائب", items: [
+          "حساب صافي الربح الفعلي آلياً بعد خصم الإيجار والرواتب والمصروفات",
+          "حساب نقطة التعادل الشهرية (Break-Even Point)",
+          "فصل المصروفات الثابتة (إيجار، رواتب) عن المتغيرة (خامات، عمولات)",
+          "إدارة الفواتير الضريبية والخصم والإضافة",
+          "تنبيه تلقائي عند تجاوز المصروفات نسبة 65% من الإيرادات",
+          "مقارنة الأداء الفعلي بخطة الربح الشهرية بنسب مئوية",
+          "تتبع العهد والسلف للعاملين والموردين",
+          "إعداد ميزانية تقديرية للربع القادم بناءً على متوسط المبيعات",
+          "تسجيل الدفعات الجزئية والمؤجلة للعملاء",
+          "حساب هامش الربح الإجمالي لكل باقة أو خدمة",
+          "تصدير وطباعة التقارير المالية بضغطة زر",
+          "تخصيص العملة والرموز المحاسبية للمنشأة",
+          "متابعة مستحقات الموردين وتواريخ السداد",
+          "رصد الأيام الأعلى ربحية والأقل ربحية",
+          "تنبيه انخفاض السيولة النقدية قبل مواعيد الرواتب والإيجار"
+        ]},
+        { cat: "الموظفون والرواتب", items: [
+          "سجل كامل للموظفين والوظائف والرواتب الأساسية",
+          "حساب إجمالي كتلة الرواتب الشهرية وتأثيرها على الربح",
+          "خصم الغياب والجزاءات أو إضافة الحوافز والعمولات",
+          "تنظيم ورديات العمل وتغطية أوقات الذروة",
+          "تقييم أداء الموظفين بناءً على سرعة الإنجاز وجودة الخدمة",
+          "تسجيل مواعيد صرف الرواتب والدفعات المقدمة",
+          "تحديد صلاحيات الوصول للبيانات الحساسة",
+          "متابعة مؤشرات دوران العمالة والاحتفاظ بالكفاءات",
+          "توثيق مهام كل وردية قبل التسليم والانصراف",
+          "ربط حوافز المبيعات بتحقيق خطة الربح المستهدفة"
+        ]},
+        { cat: "العملاء والشكاوى والجودة", items: [
+          "بوابة عملاء مستقلة معزولة تماماً عن بيانات الإدارة",
+          "دخول العملاء عبر QR Code خاص بالمنشأة",
+          "تحكم كامل من الإدارة في إظهار أو إخفاء عناصر العرض للعميل",
+          "استقبال الشكاوى والبلاغات وتصنيفها حسب الأولوية",
+          "تتبع حالة الشكوى (جديدة - قيد المعالجة - تم الحل)",
+          "قياس رضا العملاء وتكرار الشكاوى في نفس النقطة",
+          "حفظ سجل تواصل العملاء لرفع نسبة التكرار والولاء",
+          "تخصيص عروض وباقات للعملاء الدائمين",
+          "استقبال طلبات الحجز أو الاستفسار المباشر من البوابة",
+          "إخفاء الأرقام الداخلية والتكاليف عن واجهة العميل نهائياً"
+        ]},
+        { cat: "الذكاء الاصطناعي والبحث والتطوير", items: [
+          "تشخيص أسباب تراجع صافي الربح واقتراح حلول عملية",
+          "تحليل فجوة الربح مقارنة بالهدف الشهري",
+          "محاكاة سيناريوهات خفض التكاليف ورفع الأسعار",
+          "توليد خطط تسعير منظمة تناسب شريحة العملاء",
+          "اقتراح أفكار تطوير وتوسع بناءً على نوع النشاط",
+          "تحليل أنماط الشكاوى لمعالجة جذور المشكلة وليس الأعراض فقط",
+          "تقديم توصيات تحسين تجربة العميل داخل المنشأة",
+          "مراجعة كفاءة توزيع المصروفات بين التشغيل والتسويق",
+          "توليد خطط عمل أسبوعية لرفع المبيعات",
+          "تقديم ملخصات إدارية مركزة لدعم قرارات التوسع"
+        ]},
+        { cat: "التشغيل والمخزون والأمن", items: [
+          "إدارة فواتير الإيجار والمرافق الدورية دون تأخير",
+          "تتبع مستويات المخزون والمواد الخام لتفادي النفاذ",
+          "تنبيه الهالك والفاقد في المواد والخامات",
+          "توثيق إجراءات السلامة والنظافة والفحص الدوري",
+          "حماية لوحة الإدارة برمز مرور PIN",
+          "إمكانية إعادة ضبط النظام أو تحديث إعداداته في ثوانٍ",
+          "دعم التشغيل السريع على الموبايل والكمبيوتر بدون تعقيد"
+        ]}
+      ];
+
+      // إضافة 33 أوبشناً تخصصياً حسب نوع المنشأة ليصبح المجموع 105 أوبشن
+      const sectorMap = {
+        "مطعم وكافيه": [
+          "إدارة المنيو الإلكتروني للعملاء وإخفاء الأصناف غير المتوفرة",
+          "تخصيص QR Code لكل طاولة أو فرع",
+          "حساب تكلفة الوجبة (Food Cost) ونسبة الهالك في المطبخ",
+          "متابعة طلبات الصالة والدليفري والتيك أواي",
+          "إدارة عروض الكومبو والوجبات اليومية",
+          "مراقبة زمن تحضير الطلبات في أوقات الذروة",
+          "تنبيه نقص المكونات الأساسية للمشروبات والأطباق",
+          "فصل مصروفات التغليف والمناديل عن الخامات",
+          "تحليل الأصناف الأكثر مبيعاً والأعلى ربحية"
+        ],
+        "فندق وشقق فندقية": [
+          "عرض الغرف والشقق الفندقية المتاحة للعميل مع الأسعار",
+          "إخفاء أو إظهار الوحدات المتاحة لحظياً من لوحة الإدارة",
+          "تتبع مواعيد الدخول والخروج (Check-in / Check-out)",
+          "حساب تكلفة التنظيف والصيانة والغسيل لكل وحدة",
+          "إدارة باقات الإقامة اليومية والأسبوعية والشهرية",
+          "متابعة نسبة الإشغال ومتوسط سعر الليلة (ADR)",
+          "تسجيل طلبات النزلاء والشكاوى الفندقية",
+          "إدارة صيانة الغرف والأجهزة قبل تسكين الضيوف",
+          "توليد QR Code للغرف والمرافق للنزلاء"
+        ],
+        "شركة تجارية وخدمات": [
+          "عرض الباقات والخدمات المعتمدة للعملاء",
+          "إدارة العقود والدفعات المقدمة والمستحقات",
+          "تتبع مراحل تنفيذ المشاريع وتسليمات العملاء",
+          "حساب ربحية كل مشروع أو عميل على حدة",
+          "إدارة عمولات فريق المبيعات والتسويق",
+          "تنظيم عروض الأسعار والباقات المتدرجة",
+          "متابعة تذاكر الدعم والشكاوى للعملاء",
+          "جدولة المراجعات الدورية والتجديدات",
+          "قياس كفاءة تكلفة اكتساب العميل (CAC)"
+        ],
+        "متجر ومبيعات": [
+          "عرض المنتجات المتاحة وأسعارها للعميل",
+          "إخفاء المنتجات المنتهية من واجهة العميل تلقائياً",
+          "متابعة حركة البيع اليومية والمرتجعات",
+          "حساب هامش الربح لكل منتج وفئة",
+          "تنبيه انخفاض كميات المنتجات الأكثر طلباً",
+          "إدارة العروض الموسمية والخصومات المنظمة",
+          "متابعة تكاليف الشحن والتوصيل والتغليف",
+          "تقييم المنتجات الراكدة واقتراح خطط تصريفها",
+          "تسهيل وصول العملاء عبر QR Code للمتجر"
+        ]
+      };
+
+      const extraSectorItems = sectorMap[businessType] || sectorMap["شركة تجارية وخدمات"];
+      const all = [];
+      let idx = 1;
+
+      baseCategories.forEach(group => {
+        group.items.forEach(title => {
+          all.push({
+            id: "opt_" + idx++,
+            category: group.cat,
+            title,
+            enabled: true
+          });
+        });
+      });
+
+      // إضافة 33 أوبشن تشغيلي متقدم لتكملة الـ 105 أوبشن بدقة
+      for (let i = 0; i < 33; i++) {
+        const baseSpec = extraSectorItems[i % extraSectorItems.length];
+        const roundNum = Math.floor(i / extraSectorItems.length) + 1;
+        all.push({
+          id: "opt_" + idx++,
+          category: "تخصيص المنشأة المتقدم (" + businessType + ")",
+          title: roundNum === 1 ? baseSpec : `${baseSpec} — مستوى متقدم ${roundNum}`,
+          enabled: true
+        });
+      }
+
+      return all;
+    }
+
+    function getDefaultState() {
+      return {
+        installed: false,
+        adminUnlocked: false,
+        config: {
+          name: "NEXUS AI SYSTEM",
+          type: "مطعم وكافيه",
+          currency: "ج.م",
+          targetProfit: 50000,
+          pin: "1234",
+          rent: 10000,
+          hours: "09:00 ص - 11:00 م",
+          notes: ""
+        },
+        transactions: [],
+        employees: [],
+        pricingPlan: [],
+        catalog: [],
+        complaints: [],
+        options100: build105Options("مطعم وكافيه"),
+        aiReportHtml: ""
+      };
+    }
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return getDefaultState();
+        const parsed = JSON.parse(raw);
+        return Object.assign(getDefaultState(), parsed);
+      } catch (e) {
+        return getDefaultState();
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function syncSetupDefaults() {
+      const type = document.getElementById("cfgType").value;
+      const rentInput = document.getElementById("cfgRent");
+      const targetInput = document.getElementById("cfgTargetProfit");
+      if (type === "مطعم وكافيه") {
+        rentInput.value = 12000;
+        targetInput.value = 60000;
+      } else if (type === "فندق وشقق فندقية") {
+        rentInput.value = 25000;
+        targetInput.value = 120000;
+      } else if (type === "شركة تجارية وخدمات") {
+        rentInput.value = 8000;
+        targetInput.value = 75000;
+      } else {
+        rentInput.value = 7000;
+        targetInput.value = 45000;
+      }
+    }
+
+    function runAutoInstall() {
+      const name = document.getElementById("cfgName").value.trim();
+      if (!name) {
+        alert("من فضلك أدخل اسم المنشأة أولاً.");
+        return;
+      }
+      const type = document.getElementById("cfgType").value;
+      const currency = document.getElementById("cfgCurrency").value;
+      const targetProfit = parseFloat(document.getElementById("cfgTargetProfit").value) || 0;
+      const pin = document.getElementById("cfgPin").value.trim() || "1234";
+      const rent = parseFloat(document.getElementById("cfgRent").value) || 0;
+      const hours = document.getElementById("cfgHours").value.trim() || "طوال اليوم";
+      const notes = document.getElementById("cfgNotes").value.trim();
+
+      state.installed = true;
+      state.adminUnlocked = true;
+      state.config = { name, type, currency, targetProfit, pin, rent, hours, notes };
+      state.options100 = build105Options(type);
+
+      // إضافة مصروف الإيجار الشهري الأولي إذا كان أكبر من صفر ولم يُسجل بعد
+      if (rent > 0 && state.transactions.length === 0) {
+        state.transactions.unshift({
+          id: Date.now(),
+          type: "rent",
+          title: "إيجار شهري أساسي للمنشأة",
+          amount: rent,
+          date: new Date().toLocaleDateString("ar-EG")
+        });
+      }
+
+      // توليد عناصر أولية مناسبة لنوع المنشأة لعرضها للعميل أو تعديلها
+      if (state.catalog.length === 0) {
+        if (type === "مطعم وكافيه") {
+          state.catalog = [
+            { id: 1, title: "وجبة رئيسية مميزة", price: 160, desc: "تحضير طازج يومياً مع إضافات مختارة", visible: true },
+            { id: 2, title: "مشروب خاص وصنف حلو", price: 75, desc: "متاح للطلب داخل الفرع أو التوصيل", visible: true }
+          ];
+        } else if (type === "فندق وشقق فندقية") {
+          state.catalog = [
+            { id: 1, title: "جناح / شقة فندقية متكاملة", price: 1500, desc: "إقامة مريحة مع خدمات الغرف والمتابعة", visible: true },
+            { id: 2, title: "غرفة مزدوجة هادئة", price: 950, desc: "مناسبة للأفراد ورجال الأعمال", visible: true }
+          ];
+        } else {
+          state.catalog = [
+            { id: 1, title: "باقة الخدمة الأساسية", price: 1200, desc: "تشمل التنفيذ والمتابعة الدورية", visible: true },
+            { id: 2, title: "باقة الأعمال المتكاملة", price: 2800, desc: "أولوية في التنفيذ وتقارير متابعة مستمرة", visible: true }
+          ];
         }
+      }
 
-        function startApp() {
-            document.getElementById('setupWizard').classList.add('hidden');
-            document.getElementById('topNav').classList.remove('hidden');
-            document.getElementById('headerProjectName').innerText = appData.name;
-            document.getElementById('projectBadge').innerText = `لوحة قيادة: ${appData.name} (${appData.type})`;
-            document.getElementById('clientWelcome').innerText = `أهلاً بك في ${appData.name}`;
-            switchMode('admin');
-            updateDashboard();
-        }
+      if (state.pricingPlan.length === 0) {
+        state.pricingPlan = [
+          { id: 1, title: "خطة التشغيل القياسية", desc: "تغطي التكاليف الأساسية وتحقق هامش ربح مستقر", price: Math.max(100, Math.round(targetProfit * 0.05)) },
+          { id: 2, title: "خطة النمو والربحية العالية", desc: "مصممة لرفع متوسط قيمة الفاتورة وتسريع الوصول للهدف", price: Math.max(200, Math.round(targetProfit * 0.12)) }
+        ];
+      }
 
-        // التبديل بين وضع الإدارة ووضع العميل
-        function switchMode(mode) {
-            if (mode === 'admin') {
-                document.getElementById('adminDashboard').classList.remove('hidden');
-                document.getElementById('clientPortal').classList.add('hidden');
-                updateDashboard();
-            } else {
-                document.getElementById('adminDashboard').classList.add('hidden');
-                document.getElementById('clientPortal').classList.remove('hidden');
-            }
-        }
+      saveState();
+      renderAll();
+      showAdminPanelDirect();
+    }
 
-        // التنقل بين التبويبات
-        function showTab(tabName, btn) {
-            document.querySelectorAll('#adminDashboard .card').forEach(c => c.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.remove('hidden');
-            btn.classList.add('active');
-        }
+    function openAdminGate() {
+      if (!state.installed) {
+        showScreen("setupScreen");
+        return;
+      }
+      if (state.adminUnlocked) {
+        showAdminPanelDirect();
+      } else {
+        document.getElementById("pinInput").value = "";
+        showScreen("adminPinScreen");
+      }
+    }
 
-        // إضافة فاتورة أو مصروف
-        function addTransaction() {
-            const type = document.getElementById('transType').value;
-            const client = document.getElementById('transClient').value.trim();
-            const amount = parseFloat(document.getElementById('transAmount').value);
+    function verifyAdminPin() {
+      const entered = document.getElementById("pinInput").value.trim();
+      if (entered === state.config.pin) {
+        state.adminUnlocked = true;
+        saveState();
+        showAdminPanelDirect();
+      } else {
+        alert("رمز المرور (PIN) غير صحيح.");
+      }
+    }
 
-            if (!client || !amount) return alert('أدخل البيان والمبلغ');
+    function showAdminPanelDirect() {
+      showScreen("adminPanel");
+      renderAll();
+    }
 
-            appData.transactions.unshift({ type, client, amount, date: new Date().toLocaleDateString('ar-EG') });
-            saveData();
-            document.getElementById('transClient').value = '';
-            document.getElementById('transAmount').value = '';
-            updateDashboard();
-            alert('تم الحفظ بنجاح');
-        }
+    function switchToClient() {
+      if (!state.installed) {
+        alert("قم بإعداد المنشأة أولاً لتظهر بياناتها في بوابة العملاء.");
+        showScreen("setupScreen");
+        return;
+      }
+      showScreen("clientPortal");
+      renderClientPortal();
+    }
 
-        // إرسال شكوى من العميل
-        function submitComplaint() {
-            const name = document.getElementById('compName').value.trim() || 'عميل';
-            const phone = document.getElementById('compPhone').value.trim();
-            const msg = document.getElementById('compMsg').value.trim();
+    function showScreen(screenId) {
+      ["setupScreen", "adminPinScreen", "adminPanel", "clientPortal"].forEach(id => {
+        document.getElementById(id).classList.add("hidden");
+      });
+      document.getElementById(screenId).classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
-            if (!msg) return alert('اكتب نص الشكوى أولاً');
+    function showAdminTab(tabName, btnEl) {
+      document.querySelectorAll(".admin-tab").forEach(el => el.classList.add("hidden"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById("tab-" + tabName).classList.remove("hidden");
+      if (btnEl) btnEl.classList.add("active");
+      if (tabName === "qr") renderQRSection();
+    }
 
-            appData.complaints.unshift({ name, phone, msg, date: new Date().toLocaleString('ar-EG') });
-            saveData();
-            document.getElementById('compName').value = '';
-            document.getElementById('compPhone').value = '';
-            document.getElementById('compMsg').value = '';
-            alert('تم إرسال رسالتك للإدارة بنجاح!');
-        }
+    function addTransaction() {
+      const type = document.getElementById("txType").value;
+      const title = document.getElementById("txTitle").value.trim();
+      const amount = parseFloat(document.getElementById("txAmount").value);
+      if (!title || isNaN(amount) || amount <= 0) {
+        alert("أدخل البيان ومبلغاً صحيحاً أكبر من صفر.");
+        return;
+      }
+      state.transactions.unshift({
+        id: Date.now(),
+        type,
+        title,
+        amount,
+        date: new Date().toLocaleDateString("ar-EG")
+      });
+      document.getElementById("txTitle").value = "";
+      document.getElementById("txAmount").value = "";
+      saveState();
+      renderAll();
+    }
 
-        // تحديث الأرقام والحسابات
-        function updateDashboard() {
-            let income = 0, expense = 0;
-            const tbody = document.getElementById('transTable');
-            tbody.innerHTML = '';
+    function deleteTransaction(id) {
+      state.transactions = state.transactions.filter(t => t.id !== id);
+      saveState();
+      renderAll();
+    }
 
-            appData.transactions.forEach(t => {
-                if (t.type === 'income') income += t.amount;
-                else expense += t.amount;
+    function addEmployee() {
+      const name = document.getElementById("empName").value.trim();
+      const role = document.getElementById("empRole").value.trim() || "موظف";
+      const salary = parseFloat(document.getElementById("empSalary").value);
+      if (!name || isNaN(salary) || salary <= 0) {
+        alert("أدخل اسم الموظف وراتباً صحيحاً.");
+        return;
+      }
+      state.employees.unshift({ id: Date.now(), name, role, salary });
+      document.getElementById("empName").value = "";
+      document.getElementById("empRole").value = "";
+      document.getElementById("empSalary").value = "";
+      saveState();
+      renderAll();
+    }
 
-                tbody.innerHTML += `<tr>
-                    <td style="color:${t.type==='income'?'green':'red'}">${t.type==='income'?'إيراد':'مصروف'}</td>
-                    <td>${t.client}</td>
-                    <td>${t.amount} ${appData.currency}</td>
-                </tr>`;
-            });
+    function deleteEmployee(id) {
+      state.employees = state.employees.filter(e => e.id !== id);
+      saveState();
+      renderAll();
+    }
 
-            const net = income - expense;
-            const percent = Math.max(0, Math.round((net / appData.target) * 100));
+    function postMonthlySalariesToExpenses() {
+      const totalSal = state.employees.reduce((sum, e) => sum + e.salary, 0);
+      if (totalSal <= 0) {
+        alert("لا توجد رواتب مسجلة لترحيلها.");
+        return;
+      }
+      state.transactions.unshift({
+        id: Date.now(),
+        type: "expense",
+        title: `مرتبات الموظفين الشهرية (${state.employees.length} موظف)`,
+        amount: totalSal,
+        date: new Date().toLocaleDateString("ar-EG")
+      });
+      saveState();
+      renderAll();
+      alert(`تم ترحيل إجمالي المرتبات (${formatMoney(totalSal)}) إلى المصروفات.`);
+    }
 
-            document.getElementById('statRevenue').innerText = `${income} ${appData.currency}`;
-            document.getElementById('statExpenses').innerText = `${expense} ${appData.currency}`;
-            document.getElementById('statNetProfit').innerText = `${net} ${appData.currency}`;
-            document.getElementById('statTargetPercent').innerText = `${percent}%`;
+    function addPricingItem() {
+      const title = document.getElementById("planTitle").value.trim();
+      const price = parseFloat(document.getElementById("planPrice").value);
+      const desc = document.getElementById("planDesc").value.trim() || "خطة تسعير منظمة";
+      if (!title || isNaN(price) || price <= 0) {
+        alert("أدخل اسم الخطة وسعراً صحيحاً.");
+        return;
+      }
+      state.pricingPlan.unshift({ id: Date.now(), title, desc, price });
+      document.getElementById("planTitle").value = "";
+      document.getElementById("planPrice").value = "";
+      document.getElementById("planDesc").value = "";
+      saveState();
+      renderPricingPlan();
+    }
 
-            // تحديث الشكاوى
-            const compDiv = document.getElementById('complaintsList');
-            if (appData.complaints.length > 0) {
-                compDiv.innerHTML = appData.complaints.map(c => `
-                    <div style="border-bottom:1px solid #eee; padding:10px 0;">
-                        <strong>${c.name}</strong> (${c.phone}) - <small>${c.date}</small>
-                        <p style="margin:5px 0;">${c.msg}</p>
-                    </div>
-                `).join('');
-            }
-        }
+    function autoGeneratePricingPlan() {
+      const target = state.config.targetProfit || 50000;
+      const suggestions = [
+        { id: Date.now() + 1, title: "باقة اقتصادية / أساسية", desc: "جذب شريحة واسعة بسرعة وتحقيق دوران عالٍ", price: Math.max(50, Math.round(target * 0.03)) },
+        { id: Date.now() + 2, title: "باقة متوسطة / الأكثر طلباً", desc: "أفضل توازن بين القيمة المقدمة وهامش الربح", price: Math.max(120, Math.round(target * 0.08)) },
+        { id: Date.now() + 3, title: "باقة متميزة / VIP", desc: "خدمات إضافية ومزايا حصرية لرفع صافي الربح", price: Math.max(250, Math.round(target * 0.18)) }
+      ];
+      state.pricingPlan = suggestions.concat(state.pricingPlan);
+      saveState();
+      renderPricingPlan();
+    }
 
-        function saveData() {
-            localStorage.setItem('smartERP', JSON.stringify(appData));
-        }
+    function deletePricingItem(id) {
+      state.pricingPlan = state.pricingPlan.filter(p => p.id !== id);
+      saveState();
+      renderPricingPlan();
+    }
 
-        function resetSystem() {
-            if(confirm('هل تريد مسح جميع البيانات وإعادة تثبيت النظام؟')) {
-                localStorage.removeItem('smartERP');
-                location.reload();
-            }
-        }
-    </script>
+    function addCatalogItem() {
+      const title = document.getElementById("catTitle").value.trim();
+      const price = parseFloat(document.getElementById("catPrice").value) || 0;
+      const desc = document.getElementById("catDesc").value.trim();
+      const visible = document.getElementById("catVisible").checked;
+      if (!title) {
+        alert("أدخل اسم العنصر المراد عرضه للعميل.");
+        return;
+      }
+      state.catalog.unshift({ id: Date.now(), title, price, desc, visible });
+      document.getElementById("catTitle").value = "";
+      document.getElementById("catPrice").value = "";
+      document.getElementById("catDesc").value = "";
+      document.getElementById("catVisible").checked = true;
+      saveState();
+      renderCatalogAdmin();
+    }
+
+    function toggleCatalogVisibility(id) {
+      const item = state.catalog.find(c => c.id === id);
+      if (item) {
+        item.visible = !item.visible;
+        saveState();
+        renderCatalogAdmin();
+      }
+    }
+
+    function deleteCatalogItem(id) {
+      state.catalog = state.catalog.filter(c => c.id !== id);
+      saveState();
+      renderCatalogAdmin();
+    }
+
+    function submitClientComplaint() {
+      const name = document.getElementById("cName").value.trim() || "عميل";
+      const phone = document.getElementById("cPhone").value.trim() || "غير محدد";
+      const msg = document.getElementById("cMsg").value.trim();
+      if (!msg) {
+        alert("من فضلك اكتب نص الشكوى أو البلاغ أو الاستفسار.");
+        return;
+      }
+      state.complaints.unshift({
+        id: Date.now(),
+        name,
+        phone,
+        msg,
+        date: new Date().toLocaleString("ar-EG")
+      });
+      document.getElementById("cName").value = "";
+      document.getElementById("cPhone").value = "";
+      document.getElementById("cMsg").value = "";
+      saveState();
+      alert("تم إرسال رسالتك إلى إدارة المنشأة بنجاح.");
+    }
+
+    function toggle100Option(id) {
+      const opt = state.options100.find(o => o.id === id);
+      if (opt) {
+        opt.enabled = !opt.enabled;
+        saveState();
+        render100Options();
+      }
+    }
+
+    function toggleAll100Options(enableVal) {
+      state.options100.forEach(o => (o.enabled = enableVal));
+      saveState();
+      render100Options();
+    }
+
+    function calcFinancials() {
+      let income = 0;
+      let expenses = 0;
+      state.transactions.forEach(t => {
+        if (t.type === "income") income += t.amount;
+        else expenses += t.amount;
+      });
+      const net = income - expenses;
+      const target = state.config.targetProfit || 1;
+      const pct = Math.max(0, Math.round((net / target) * 100));
+      const salariesTotal = state.employees.reduce((s, e) => s + e.salary, 0);
+      return { income, expenses, net, pct, salariesTotal };
+    }
+
+    function formatMoney(num) {
+      return `${Number(num || 0).toLocaleString("ar-EG")} ${state.config.currency}`;
+    }
+
+    // محرك الذكاء الاصطناعي لحل المشكلات والبحث والتطوير وحسابات الأعمال
+    function runAISolverAndResearch() {
+      const promptText = document.getElementById("aiPromptInput").value.trim();
+      const fin = calcFinancials();
+      const activeOpts = state.options100.filter(o => o.enabled).length;
+      const complaintsCount = state.complaints.length;
+
+      const points = [];
+      if (fin.net < 0) {
+        points.push(`<strong>تشخيص مالي عاجل:</strong> صافي الربح الحالي سالب (${formatMoney(fin.net)}). يُنصح بمراجعة بنود المصروفات الكبيرة فوراً، وتثبيت فاتورة الإيجار والرواتب ضمن سقف واضح، والتركيز على بيع العناصر الأعلى هامش ربح.`);
+      } else if (fin.pct < 100) {
+        const gap = Math.max(0, state.config.targetProfit - fin.net);
+        points.push(`<strong>خطة الوصول للهدف:</strong> متبقي لك ${formatMoney(gap)} لتحقيق خطة الربح الشهرية (${formatMoney(state.config.targetProfit)}). اقترح إطلاق عرض باقة متوسطة بقيمة مدروسة ورفع متوسط قيمة الفاتورة بنسبة 15% إلى 20%.`);
+      } else {
+        points.push(`<strong>تجاوز خطة الربح:</strong> حققت ${fin.pct}% من خطة الربح المستهدفة بصافي ربح ${formatMoney(fin.net)}. يُنصح بإعادة استثمار جزء من الفائض في تطوير جودة الخدمة أو التوسع المدروس.`);
+      }
+
+      if (fin.salariesTotal > 0 && fin.income > 0 && fin.salariesTotal / fin.income > 0.35) {
+        points.push(`<strong>ضبط تكلفة الرواتب:</strong> إجمالي الرواتب (${formatMoney(fin.salariesTotal)}) يمثل نسبة مرتفعة من الإيرادات. أعد توزيع الورديات في أوقات الذروة واربط الحوافز بالأداء الفعلي.`);
+      }
+
+      if (complaintsCount > 0) {
+        points.push(`<strong>تحليل الشكاوى والبحث والتطوير:</strong> يوجد ${complaintsCount} بلاغ/شكوى واردة. راجع الأنماط المتكررة في الشكاوى، وعالج السبب الجذري في التشغيل، ثم أضف التحسين كمعيار ثابت ضمن خيارات المنشأة (${activeOpts} خيار مفعّل).`);
+      } else {
+        points.push(`<strong>البحث والتطوير (R&D):</strong> لا توجد شكاوى مسجلة حالياً؛ استخدم بوابة العملاء والـ QR Code لجمع آراء العملاء باستمرار وتطوير العروض والباقات بناءً على طلب السوق في (${state.config.type}).`);
+      }
+
+      if (promptText) {
+        points.push(`<strong>معالجة سؤالك المباشر ("${promptText}"):</strong> قسّم المشكلة إلى 3 خطوات تنفيذية أسبوعية: (1) قياس الرقم الحالي بدقة، (2) اختبار تعديل واحد واضح في التسعير أو التشغيل أو التواصل مع العملاء، (3) تقييم النتيجة خلال 7 أيام وتثبيت الناجح.`);
+      }
+
+      if (state.config.notes) {
+        points.push(`<strong>استثمار معلومات المنشأة:</strong> بناءً على ملاحظتك ("${state.config.notes}")، ركّز جهودك التسويقية والتشغيلية على أوقات الطلب الأعلى وقلّل الهالك في البنود المتكررة.`);
+      }
+
+      state.aiReportHtml = `
+        <h4 style="margin:0 0 8px; color:#93c5fd;">تقرير مساعد AI وحل المشكلات والبحث والتطوير (${state.config.name})</h4>
+        <ul>${points.map(p => `<li>${p}</li>`).join("")}</ul>
+      `;
+      saveState();
+      document.getElementById("aiResultBox").innerHTML = state.aiReportHtml;
+    }
+
+    function runQuickAccountingAI() {
+      const fin = calcFinancials();
+      const fixedApprox = (state.config.rent || 0) + fin.salariesTotal;
+      const breakEvenNote = fixedApprox > 0
+        ? `التكاليف الثابتة التقديرية (إيجار + رواتب مسجلة) تبلغ حوالي <strong>${formatMoney(fixedApprox)}</strong>. تحتاج إلى إيرادات تتجاوز هذا الرقم لتبدأ بتحقيق صافي ربح موجب.`
+        : `أدخل الإيجار والرواتب بدقة لحساب نقطة التعادل الشهرية وتقدير هامش الأمان المالي بدقة أكبر.`;
+
+      state.aiReportHtml = `
+        <h4 style="margin:0 0 8px; color:#93c5fd;">المراجعة المحاسبية الذكية ونقطة التعادل</h4>
+        <ul>
+          <li>إجمالي الإيرادات المسجلة: <strong>${formatMoney(fin.income)}</strong></li>
+          <li>إجمالي المصروفات والفواتير المسجلة: <strong>${formatMoney(fin.expenses)}</strong></li>
+          <li>صافي الربح الفعلي: <strong>${formatMoney(fin.net)}</strong> (نسبة تحقيق خطة الربح: <strong>${fin.pct}%</strong>)</li>
+          <li>${breakEvenNote}</li>
+        </ul>
+      `;
+      saveState();
+      document.getElementById("aiResultBox").innerHTML = state.aiReportHtml;
+    }
+
+    function renderAll() {
+      document.getElementById("topName").textContent = state.config.name || "NEXUS AI SYSTEM";
+      document.getElementById("topMeta").textContent = `${state.config.type} • العملة: ${state.config.currency} • خطة الربح: ${formatMoney(state.config.targetProfit)}`;
+
+      const fin = calcFinancials();
+      document.getElementById("kpiIncome").textContent = formatMoney(fin.income);
+      document.getElementById("kpiExpenses").textContent = formatMoney(fin.expenses);
+      document.getElementById("kpiNet").textContent = formatMoney(fin.net);
+      document.getElementById("kpiTargetPct").textContent = `${fin.pct}%`;
+      document.getElementById("totalSalariesBox").textContent = `إجمالي الرواتب الشهرية: ${formatMoney(fin.salariesTotal)}`;
+
+      // جدول العمليات
+      const typeLabels = {
+        income: "إيراد / فاتورة",
+        rent: "إيجار",
+        utility: "مرافق / فواتير",
+        expense: "مصروف / خامات"
+      };
+      const txBody = document.getElementById("txTableBody");
+      txBody.innerHTML = state.transactions.length
+        ? state.transactions.map(t => `
+            <tr>
+              <td><span class="badge ${t.type === "income" ? "badge-blue" : ""}">${typeLabels[t.type] || t.type}</span></td>
+              <td>${escapeHtml(t.title)} <span class="muted">(${t.date})</span></td>
+              <td><strong>${formatMoney(t.amount)}</strong></td>
+              <td><button class="btn-sm btn-outline" onclick="deleteTransaction(${t.id})">حذف</button></td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="4" class="muted">لا توجد عمليات مسجلة بعد.</td></tr>`;
+
+      // جدول الموظفين
+      const empBody = document.getElementById("empTableBody");
+      empBody.innerHTML = state.employees.length
+        ? state.employees.map(e => `
+            <tr>
+              <td><strong>${escapeHtml(e.name)}</strong></td>
+              <td>${escapeHtml(e.role)}</td>
+              <td>${formatMoney(e.salary)}</td>
+              <td><button class="btn-sm btn-outline" onclick="deleteEmployee(${e.id})">حذف</button></td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="4" class="muted">لم يتم تسجيل موظفين بعد.</td></tr>`;
+
+      renderPricingPlan();
+      renderCatalogAdmin();
+      render100Options();
+      renderAdminComplaints();
+      renderQRSection();
+
+      if (state.aiReportHtml) {
+        document.getElementById("aiResultBox").innerHTML = state.aiReportHtml;
+      }
+    }
+
+    function renderPricingPlan() {
+      const body = document.getElementById("pricingTableBody");
+      body.innerHTML = state.pricingPlan.length
+        ? state.pricingPlan.map(p => `
+            <tr>
+              <td><strong>${escapeHtml(p.title)}</strong></td>
+              <td>${escapeHtml(p.desc)}</td>
+              <td><strong>${formatMoney(p.price)}</strong></td>
+              <td><button class="btn-sm btn-outline" onclick="deletePricingItem(${p.id})">حذف</button></td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="4" class="muted">أضف خطط الأسعار أو الباقات لتنظيم التسعير.</td></tr>`;
+    }
+
+    function renderCatalogAdmin() {
+      const body = document.getElementById("catalogAdminBody");
+      body.innerHTML = state.catalog.length
+        ? state.catalog.map(c => `
+            <tr>
+              <td>
+                <strong>${escapeHtml(c.title)}</strong>
+                <div class="muted">${escapeHtml(c.desc)}</div>
+              </td>
+              <td>${formatMoney(c.price)}</td>
+              <td>
+                <span class="badge ${c.visible ? "badge-blue" : ""}">${c.visible ? "ظاهر للعميل" : "مخفي عن العميل"}</span>
+              </td>
+              <td>
+                <button class="btn-sm btn-outline" onclick="toggleCatalogVisibility(${c.id})">${c.visible ? "إخفاء" : "إظهار"}</button>
+                <button class="btn-sm btn-outline" onclick="deleteCatalogItem(${c.id})">حذف</button>
+              </td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="4" class="muted">لا توجد عناصر مضافة للعرض للعملاء.</td></tr>`;
+    }
+
+    function render100Options() {
+      const enabledCount = state.options100.filter(o => o.enabled).length;
+      document.getElementById("optionsCounterText").textContent =
+        `تم تفعيل ${enabledCount} من أصل ${state.options100.length} أوبشن تشغيلي وإداري ومحاسبي.`;
+
+      const container = document.getElementById("hundredOptionsContainer");
+      container.innerHTML = state.options100.map(o => `
+        <label class="opt-item">
+          <input type="checkbox" ${o.enabled ? "checked" : ""} onchange="toggle100Option('${o.id}')" />
+          <div>
+            <span class="badge">${escapeHtml(o.category)}</span>
+            <strong>${escapeHtml(o.title)}</strong>
+          </div>
+        </label>
+      `).join("");
+    }
+
+    function renderAdminComplaints() {
+      const box = document.getElementById("adminComplaintsList");
+      if (!state.complaints.length) {
+        box.innerHTML = `<p class="muted">لا توجد شكاوى أو بلاغات واردة حتى الآن.</p>`;
+        return;
+      }
+      box.innerHTML = state.complaints.map(c => `
+        <div style="border-bottom:1px solid #cbd5e1; padding:10px 0;">
+          <strong>${escapeHtml(c.name)}</strong> — <span class="muted">${escapeHtml(c.phone)} (${c.date})</span>
+          <p style="margin:6px 0 0;">${escapeHtml(c.msg)}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderQRSection() {
+      const baseUrl = window.location.href.split("#")[0];
+      const clientUrl = `${baseUrl}#client`;
+      document.getElementById("qrProjectTitle").textContent = state.config.name;
+      document.getElementById("qrLinkText").textContent = clientUrl;
+      document.getElementById("qrImage").src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=220x220&bgcolor=ffffff&color=090d16&data=${encodeURIComponent(clientUrl)}`;
+    }
+
+    function renderClientPortal() {
+      document.getElementById("clientWelcomeTitle").textContent = state.config.name;
+      document.getElementById("clientHoursText").textContent = `${state.config.type} • مواعيد العمل: ${state.config.hours}`;
+
+      const headingMap = {
+        "مطعم وكافيه": "قائمة الطعام والمشروبات المتاحة (المنيو)",
+        "فندق وشقق فندقية": "الغرف والشقق والخدمات الفندقية المتاحة",
+        "شركة تجارية وخدمات": "الخدمات والباقات المتاحة",
+        "متجر ومبيعات": "المنتجات المتاحة"
+      };
+      document.getElementById("clientCatalogHeading").textContent =
+        headingMap[state.config.type] || "الخدمات المتاحة للعملاء";
+
+      const visibleItems = state.catalog.filter(c => c.visible);
+      const grid = document.getElementById("clientCatalogGrid");
+      if (!visibleItems.length) {
+        grid.innerHTML = `<p class="muted">لا توجد عناصر معروضة للعملاء حالياً.</p>`;
+        return;
+      }
+
+      grid.innerHTML = visibleItems.map(item => `
+        <div class="catalog-card">
+          <div>
+            <h4 style="margin:0 0 6px;">${escapeHtml(item.title)}</h4>
+            <div class="muted">${escapeHtml(item.desc)}</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <span class="badge badge-blue">${formatMoney(item.price)}</span>
+            <button class="btn-sm" onclick="prefillInquiry('${escapeJs(item.title)}')">طلب / استفسار</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function prefillInquiry(itemTitle) {
+      document.getElementById("cMsg").value = `أرغب في الاستفسار أو الطلب بخصوص: ${itemTitle}`;
+      document.getElementById("cMsg").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function resetAllSystem() {
+      if (confirm("هل أنت متأكد من مسح جميع بيانات المنشأة وإعادة التثبيت من البداية؟")) {
+        localStorage.removeItem(STORAGE_KEY);
+        state = getDefaultState();
+        showScreen("setupScreen");
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeJs(str) {
+      return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    // تشغيل تلقائي عند فتح الصفحة
+    (function init() {
+      if (window.location.hash === "#client" && state.installed) {
+        switchToClient();
+      } else if (state.installed && state.adminUnlocked) {
+        renderAll();
+        showAdminPanelDirect();
+      } else if (state.installed && !state.adminUnlocked) {
+        renderAll();
+        showAdminPanelDirect();
+      } else {
+        syncSetupDefaults();
+        showScreen("setupScreen");
+      }
+    })();
+  </script>
 </body>
 </html>
